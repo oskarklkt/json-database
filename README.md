@@ -1,4 +1,4 @@
-# oklekot-JSON_Database
+# oklekot-JSON_Database 👨🏼‍💻
 
 
 ## Project's stages overview:
