@@ -1,9 +1,9 @@
-# oklekot-JSON_Database 👨🏼‍💻
+# oklekot-JSON_Database 🗄️
 
 
-## Project's stages overview:
+## Project's stages overview👀:
 
-### Stage 1/6 Create a database
+### Stage 1️⃣ Create a database
 ##### Description
 JSON database is a single file database that stores information in the form of JSON. It is a remote database, so it's usually accessed through the Internet.
 
@@ -20,7 +20,7 @@ Your program should run from the main function of the server package.
 
 ---
 
-### Stage 2/6 Connect it to a server
+### Stage 2️⃣ Connect it to a server
 ##### Description
 Usually, online databases are accessed through the Internet. In this project, the database will be on your computer, but it will still be run as a separate program. The client who wants to get, create, or delete some information is a separate program, too.
 
@@ -60,7 +60,7 @@ Received: A record # 12 was sent!
 
 ---
 
-### Stage 3/6 Add new functionalities
+### Stage 3️⃣ Add new functionalities
 ##### Description
 In this stage, you will build upon the functionality of the program that you wrote in the first stage. The server should be able to receive messages get, set, and delete with an index of the cell. You also need to extend the database to 1000 cells (1-1000).
 
@@ -101,7 +101,7 @@ Received: ERROR
 
 ---
 
-### Stage 4/6
+### Stage 4️⃣
 
 
 
