@@ -1,93 +1,111 @@
 # oklekot-JSON_Database
 
 
+## Project's stages overview:
 
-## Getting started
+### Stage 1/6 Create a database
+##### Description
+JSON database is a single file database that stores information in the form of JSON. It is a remote database, so it's usually accessed through the Internet.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+In this stage, you need to simulate a database that can store text information in an array of size 100. From the start of the database, every cell contains an empty string. Users can save strings in the cells, read the information from these cells, and delete that information if needed. After a string has been deleted, that cell should contain an empty string.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+The user can use the set, get, or delete commands.
 
-## Add your files
+##### Objectives
+After set, a user should specify a number (1-100) and the text that will be saved to the cell. If the index is wrong, the program should output ERROR, otherwise, output OK. If the specified cell already contains information, it should be overwritten.
+After get, a user should specify the cell number from which they want to get information. If the cell is empty or the index is wrong, the program should output ERROR; otherwise, the program should output the content of the cell.
+After delete, the user should specify the number of the cell. If the index is wrong, the program should output ERROR; otherwise, output OK. If the string is empty, you don't have to do anything.
+To exit the program, a user should enter exit.
+Your program should run from the main function of the server package.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+---
 
-```
-cd existing_repo
-git remote add origin https://gitlab.griddynamics.net/pl-java-internship-2024-q1/oklekot-json_database.git
-git branch -M main
-git push -uf origin main
-```
+### Stage 2/6 Connect it to a server
+##### Description
+Usually, online databases are accessed through the Internet. In this project, the database will be on your computer, but it will still be run as a separate program. The client who wants to get, create, or delete some information is a separate program, too.
 
-## Integrate with your tools
+We will be using a socket to connect to the database. A socket is an interface to send and receive data between different processes. These processes can be on the same computer or different computers connected through the Internet.
 
-- [ ] [Set up project integrations](https://gitlab.griddynamics.net/pl-java-internship-2024-q1/oklekot-json_database/-/settings/integrations)
+To connect to the server, the client must know its address, which consists of two parts: IP-address and port. The address of your computer is always "127.0.0.1". The port can be any number between 0 and 65535, but preferably greater than 1024.
 
-## Collaborate with your team
+Let's take a look at this client-side code:
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+String address = "127.0.0.1";
+int port = 23456;
+Socket socket = new Socket(InetAddress.getByName(address), port);
+DataInputStream input = new DataInputStream(socket.getInputStream());
+DataOutputStream output = new DataOutputStream(socket.getOutputStream());
+The client created a new socket, which means that the client tried to connect to the server. Successful creation of a socket means that the client found the server and managed to connect to it.
 
-## Test and Deploy
+After that, you can see the creation of DataInputStream and DataOutputStream objects. These are the input and output streams to the server. If you expect data from the server, you need to write input.readUTF(). This returns the String object that the server sent to the client. If you want to send data to the server, you need to write output.writeUTF(stringText), and this message will be sent to the server.
 
-Use the built-in continuous integration in GitLab.
+The server created a ServerSocket object that waits for client connections. When a client connects, the method server.accept() returns the Socket connection to this client. After that, you can see the creation of DataInputStream and DataOutputStream objects: these are the input and output streams to this client, now from the server side. To receive data from the client, write input.readUTF(). To send data to the client, write output.writeUTF(stringText). The server should stop after responding to the client.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+##### Objectives
+In this stage, implement the simplest connection between one server and one client. The client should send the server a message: something along the lines of Give me a record # N, where N is an integer number. The server should reply A record # N was sent! to the client. Both the client and the server should print the received messages to the console. Note that they exchange only these texts, not actual database files.
 
-***
+Before a client connects to the server, the server output should be Server started!.
 
-# Editing this README
+Note: the server and the client are different programs that run separately. Your server should run from the main function of the /server package, and the client should run from the main method of the /client package. To test your program you should run the server first so a client can connect to the server.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+##### Example
+The server should output something like this:
+Server started!
+Received: Give me a record # 12
+Sent: A record # 12 was sent!
+The client should output something like this:
+Client started!
+Sent: Give me a record # 12
+Received: A record # 12 was sent!
 
-## Suggestions for a good README
+---
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### Stage 3/6 Add new functionalities
+##### Description
+In this stage, you will build upon the functionality of the program that you wrote in the first stage. The server should be able to receive messages get, set, and delete with an index of the cell. You also need to extend the database to 1000 cells (1-1000).
 
-## Name
-Choose a self-explaining name for your project.
+There is no need to save files on the hard drive, so if the server reboots, all the data will be lost. The server should serve one client at a time in a loop, and the client should only send one request to the server, get one reply, and exit. After that, the server should wait for another connection.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+##### Objectives
+Since the server cannot shut down by itself and testing requires the program to stop at a certain point, you should implement a way to stop the server. When the client sends exit, the server should stop. In a normal situation when there's no testing needed, you shouldn't allow this behavior.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+To send a request to the server, the client should get all the information through command-line arguments. These arguments include the type of the request (set, get, or delete), the index of the cell, and, in the case of the set request, a text.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+There is a good library to parse all the arguments called JCommander. It is included in our project setup, so you can use it without any installation. Before you get started with it, we recommend you check out a JCommander tutorial.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+The arguments will be passed to the client in the following format:
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+-t set -i 148 -m Here is some text to store on the server
+-t is the type of the request, and -i is the index of the cell. -m is the value to save in the database: you only need it in case of a set request.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+The server and the client are different programs that run separately. Your server should run from the main method of the /server/Main class, and the client should run from the main method of the /client/Main class.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+##### Example
+The greater-than symbol followed by a space (> ) represents the user input. Note that it's not part of the input.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Starting the server:
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+java Main
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Server started!
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+Starting the clients:
 
-## License
-For open source projects, say how it is licensed.
+java Main -t get -i 1
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Client started!
+
+Sent: get 1
+
+Received: ERROR
+
+---
+
+### Stage 4/6
+
+
+
+
+
+
+
