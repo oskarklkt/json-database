@@ -1,7 +1,7 @@
 package com.griddynamics.jsondatabase.server.socket;
 
 import com.google.gson.Gson;
-import com.griddynamics.jsondatabase.server.Main;
+import com.griddynamics.jsondatabase.server.ServerSideApp;
 import com.griddynamics.jsondatabase.server.messages.OutputMessages;
 import com.griddynamics.jsondatabase.server.response.Response;
 
@@ -21,12 +21,8 @@ public class ServerConnection {
     private DataOutputStream output;
     public static boolean isServerClosed = false;
 
-    public ServerConnection() {
-        try {
-            this.server = new ServerSocket(port, 50, InetAddress.getByName(address));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public ServerConnection() throws IOException {
+        this.server = new ServerSocket(port, 50, InetAddress.getByName(address));
     }
     public void init()  {
         try {
@@ -63,7 +59,7 @@ public class ServerConnection {
 
     public Response receive() {
         try {
-            return Main.start(input.readUTF());
+            return ServerSideApp.manageInput(input.readUTF());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

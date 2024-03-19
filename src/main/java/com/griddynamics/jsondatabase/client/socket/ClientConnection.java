@@ -11,7 +11,6 @@ import java.net.Socket;
 public class ClientConnection {
     private static final String address = "127.0.0.1";
     private static final int port = 23456;
-    private Socket socket;
     private DataInputStream input;
     private DataOutputStream output;
 
@@ -21,7 +20,7 @@ public class ClientConnection {
 
     private void init() {
         try {
-            socket = new Socket(InetAddress.getByName(address), port);
+            Socket socket = new Socket(InetAddress.getByName(address), port);
             input = new DataInputStream(socket.getInputStream());
             output  = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {

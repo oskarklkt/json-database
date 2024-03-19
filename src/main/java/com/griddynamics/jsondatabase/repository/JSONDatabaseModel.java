@@ -1,10 +1,12 @@
 package com.griddynamics.jsondatabase.repository;
 
 import com.griddynamics.jsondatabase.server.messages.OutputMessages;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public class JSONDatabaseModel {
     private final Map<String, String> database;
     public JSONDatabaseModel() {

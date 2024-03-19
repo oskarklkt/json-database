@@ -6,14 +6,11 @@ import com.griddynamics.jsondatabase.server.messages.OutputMessages;
 import com.griddynamics.jsondatabase.server.response.ErrorResponse;
 import com.griddynamics.jsondatabase.server.response.Response;
 import com.griddynamics.jsondatabase.server.response.ValueResponse;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class JSONDatabaseController {
     private final JSONDatabaseModel database;
-
-    public JSONDatabaseController(JSONDatabaseModel database) {
-        this.database = database;
-    }
-
     public Response set(Request request) {
         database.setData(request.getKey(), request.getValue());
         return new Response(OutputMessages.OK);

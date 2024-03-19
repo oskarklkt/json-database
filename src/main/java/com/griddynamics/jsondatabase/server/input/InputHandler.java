@@ -4,7 +4,7 @@ import com.griddynamics.jsondatabase.client.request.Request;
 import com.google.gson.Gson;
 
 public class InputHandler {
-    public static Request handleInput(String input) {
+    public Request handleInput(String input) {
         Gson gson = new Gson();
         return gson.fromJson(input, Request.class);
     }

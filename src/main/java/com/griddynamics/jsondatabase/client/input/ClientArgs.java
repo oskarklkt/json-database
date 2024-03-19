@@ -1,7 +1,9 @@
 package com.griddynamics.jsondatabase.client.input;
 
 import com.beust.jcommander.Parameter;
+import lombok.Getter;
 
+@Getter
 public class ClientArgs {
     @Parameter(names = {"--type", "-t"}, description = "Type of request (set, get, delete, exit)", required = true)
     private String type;
@@ -11,16 +13,4 @@ public class ClientArgs {
 
     @Parameter(names = {"--value", "-v"}, description = "Value to set in the cell")
     private String value;
-
-    public String getType() {
-        return type;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

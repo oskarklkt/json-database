@@ -8,23 +8,39 @@ import com.griddynamics.jsondatabase.server.messages.*;
 import com.griddynamics.jsondatabase.server.response.Response;
 import com.griddynamics.jsondatabase.server.socket.ServerConnection;
 
+import java.io.IOException;
 
-public class Main {
 
-    private static final JSONDatabaseController controller = new JSONDatabaseController(new JSONDatabaseModel());
-    private static ServerConnection serverConnection;
+public class ServerSideApp {
+
+    static InputHandler inputHandler = new InputHandler();
+    static JSONDatabaseController controller = new JSONDatabaseController(new JSONDatabaseModel());
+    static ServerConnection serverConnection;
+
 
     public static void main(String[] args) {
         System.out.println(OutputMessages.SERVER_STARTED);
+        startApp();
+    }
+
+    public static void startApp() {
         do {
-            serverConnection = new ServerConnection();
+            try {
+                serverConnection = new ServerConnection();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             serverConnection.init();
             serverConnection.send();
         } while (!ServerConnection.isServerClosed);
     }
 
-    public static Response start(String input) {
-        Request command = InputHandler.handleInput(input);
+    public static Response manageInput(String input) {
+        Request command = inputHandler.handleInput(input);
+        return processCommand(command);
+    }
+
+    static Response processCommand(Request command) {
         String action = command.getType();
         switch (action) {
             case InputMessages.GET -> {
@@ -36,8 +52,10 @@ public class Main {
             case InputMessages.DELETE -> {
                 return controller.delete(command);
             }
-            case InputMessages.EXIT -> serverConnection.exit();
+            default -> {
+                serverConnection.exit();
+                return null;
+            }
         }
-        return null;
     }
 }
