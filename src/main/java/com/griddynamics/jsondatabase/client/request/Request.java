@@ -1,9 +1,11 @@
 package com.griddynamics.jsondatabase.client.request;
 
 import com.google.gson.Gson;
+import lombok.Getter;
 
 import java.util.Objects;
 
+@Getter
 public class Request {
     private final String type;
     private String key;
@@ -26,18 +28,6 @@ public class Request {
     public String parseJSON() {
         Gson gson = new Gson();
         return gson.toJson(this);
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     @Override
