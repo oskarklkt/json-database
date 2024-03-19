@@ -3,6 +3,8 @@
 
 ## Project's stages overview👀:
 
+### Hyperskill project: JSON_Database
+more information: https://hyperskill.org/projects/65?track=17
 ### Stage 1️⃣ Create a database
 ##### Description
 JSON database is a single file database that stores information in the form of JSON. It is a remote database, so it's usually accessed through the Internet.
@@ -101,7 +103,136 @@ Received: ERROR
 
 ---
 
-### Stage 4️⃣
+### Stage 4️⃣ Start work with JSON
+##### Description
+In this stage, you will store the database in JSON format. To work with JSON, we recommend using the GSON library made by Google. It is also included in our project setup. It is a good idea to get familiar with the library beforehand: see zetcode.com for some explanations!
+
+In this stage, you should store the database as a Java JSON object.
+
+The keys should be strings (no more limited integer indexes), and the values should be strings, as well.
+
+Example of JSON database:
+
+{
+    "key1": "String value",
+    "key2": 2,
+    "key3": true
+}
+Also, you should send to the server a valid JSON (as a string) which includes all the parameters needed to execute the request. Below are a few examples for the set, get, and delete requests. Don't worry about multiple lines: the GSON library can represent them as a single line. Also, don't worry about extra spaces before and after quotes.
+
+Here is what the set request format should look like:
+
+{ "type": "set", "key": "Secret key", "value": "Secret value" }
+The responses should be in the JSON format. Please consider the examples below.
+
+{ "response": "OK" }
+The get request
+
+{ "type": "get", "key": "Secret key" }
+The delete request
+
+{ "type": "delete", "key": "Key that doesn't exist" }
+In the case of a get request with a key stored in the database:
+
+{ "response": "OK", "value": "Secret value" }
+In the case of a get or delete request with a key that doesn't exist:
+
+{ "response": "ERROR", "reason": "No such key" }
+
+##### Objectives
+Implement a Java JSON object to store the database records.
+
+Implement the set, get, and delete requests and the OK and ERROR responses. Don't worry about multiple lines: the GSON library can represent them as a single line. Also, don't worry about extra spaces before and after quotes.
+
+The arguments will be passed to the client in the following format:
+
+-t set -k "Some key" -v "Here is some text to store on the server"
+-t is the type of the request, and -k is the key. -v is the value to save in the database: you only need it in case of a set request.
+
+---
+
+### Stage 5️⃣ Manage multiple requests
+##### Description
+In this stage, improve your client and server by adding the ability to work with files. The server should keep the database on the hard drive file and update only after setting a new value or deleting one.
+
+Let's think about another important aspect: when your database server becomes very popular, it won’t be able to process a lot of requests because it can only process one request at a time. To avoid that, you can parallelize the server's work using executors, so that every request is parsed and handled in a separate executor's task. The main thread should just wait for incoming requests.
+
+For this kind of functionality, you need synchronization because all your threads will work with the same file. Even after parallelizing, you need to preserve the integrity of the database. Of course, you can't write the file in two separate threads simultaneously, but if no one is currently writing to the file, a lot of threads can read it, and no one can interrupt the other since no one is modifying it. This behavior is implemented in java.util.concurrent.locks.ReentrantReadWriteLock class. It allows multiple readers of the resource but only a single writer. Once a writer locks the resource, it waits until all the readers finish reading and only then starts to write. The readers can freely read the file even though other readers locked it, but if the writer locks the file, no readers can read it.
+
+To use this class, you need two locks: read lock and write lock. See the snippet below:
+
+ReadWriteLock lock = new ReentrantReadWriteLock();
+Lock readLock = lock.readLock();
+Lock writeLock = lock.writeLock();
+Every time you want to read the file, invoke readLock.lock(). After reading, invoke readLock.unlock(). Do the same with writeLock, but only when you want to change the data.
+
+Here are some examples of the input file contents:
+
+{"type":"set","key":"name","value":"Kate"}
+{"type":"get","key":"name"}
+{"type":"delete","key":"name"}
+
+##### Objectives
+The server should keep the database on the hard drive in a db.json file which should be stored as the JSON file in the /server/data folder.
+Use executors at the server in order to simultaneously handle multiple requests. Writing to the database file should be protected by a lock as described in the description.
+Implement the ability to read a request from a file. If the -in argument is followed by the file name provided, read a request from that file. The file will be stored in /client/data.
+
+### Stage 6️⃣ Store JSON objects in your database
+##### Description
+Improve your database in this stage. It should be able to store not only strings but any JSON objects as values.
+
+The key should not only be a string since the user needs to retrieve part of the JSON value. For example, in the code snippet below, the user wants to get only the surname of the person:
+
+{
+    ... ,
+
+    "person": {
+        "name": "Adam",
+        "surname": "Smith"
+    }
+    ...
+}
+Then, the user should type the full path to this field in a form of a JSON array: ["person", "surname"]. If the user wants to get the full person object, then they should type ["person"]. The user should be able to set separate values inside JSON values. For example, it should be possible to set only the surname using a key ["person", "surname"] and any value including another JSON. Moreover, the user should be able to set new values inside other JSON values. For example, using a key ["person", "age"] and a value 25, the person object should look like this:
+
+{
+    ... ,
+
+    "person": {
+        "name": "Adam",
+        "surname": "Smith",
+        "age": 25
+
+    }
+    ...
+}
+If there are no root objects, the server should create them, too. For example, if the database does not have a "person1" key but the user set the value {"id1": 12, "id2": 14} for the key ["person1", "inside1", "inside2"], then the database will have the following structure:
+
+{
+    ... ,
+    "person1": {
+        "inside1": {
+            "inside2" : {
+                "id1": 12,
+                "id2": 14
+            }
+        }
+    },
+    ...
+}
+The deletion of objects should follow the same rules. If a user deletes the object above by the key ["person1", "inside1", "inside2], then only "inside2" should be deleted, not "inside1" or "person1". See the example below:
+
+{
+    ... ,
+    "person1": {
+        "inside1": { }
+    }
+
+    ...
+}
+##### Objectives
+Enhance your database with the ability to store any JSON objects as values as portrayed at the description.
+
+
 
 
 
