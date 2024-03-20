@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.griddynamics.jsondatabase.server.ServerSideApp;
 import com.griddynamics.jsondatabase.server.messages.OutputMessages;
 import com.griddynamics.jsondatabase.server.response.Response;
+import com.griddynamics.jsondatabase.server.socket.Factory.ServerSocketFactory;
+import lombok.Getter;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,17 +14,20 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+@Getter
 public class ServerConnection {
     private static final String address = "127.0.0.1";
     private static final int port = 23456;
+    private final ServerSocketFactory serverSocketFactory;
     public ServerSocket server;
     public Socket socket;
     private DataInputStream input;
     private DataOutputStream output;
-    public static boolean isServerClosed = false;
+    private boolean isServerClosed = false;
 
-    public ServerConnection() throws IOException {
-        this.server = new ServerSocket(port, 50, InetAddress.getByName(address));
+    public ServerConnection(ServerSocketFactory factory) throws IOException {
+        this.serverSocketFactory = factory;
+        this.server = serverSocketFactory.createServerSocket(port, 50, InetAddress.getByName(address));
     }
     public void init()  {
         try {
@@ -33,6 +38,10 @@ public class ServerConnection {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public boolean isServerClosed() {
+        return isServerClosed;
     }
 
     public void send() {

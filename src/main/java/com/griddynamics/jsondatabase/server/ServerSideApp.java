@@ -6,7 +6,10 @@ import com.griddynamics.jsondatabase.repository.JSONDatabaseModel;
 import com.griddynamics.jsondatabase.server.input.InputHandler;
 import com.griddynamics.jsondatabase.server.messages.*;
 import com.griddynamics.jsondatabase.server.response.Response;
+import com.griddynamics.jsondatabase.server.socket.Factory.DefaultServerSocketFactory;
+import com.griddynamics.jsondatabase.server.socket.Factory.ServerSocketFactory;
 import com.griddynamics.jsondatabase.server.socket.ServerConnection;
+
 
 import java.io.IOException;
 
@@ -17,6 +20,8 @@ public class ServerSideApp {
     static JSONDatabaseController controller = new JSONDatabaseController(new JSONDatabaseModel());
     static ServerConnection serverConnection;
 
+    private static final ServerSocketFactory socketFactory = new DefaultServerSocketFactory();
+
 
     public static void main(String[] args) {
         System.out.println(OutputMessages.SERVER_STARTED);
@@ -26,13 +31,13 @@ public class ServerSideApp {
     public static void startApp() {
         do {
             try {
-                serverConnection = new ServerConnection();
+                serverConnection = new ServerConnection(socketFactory);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             serverConnection.init();
             serverConnection.send();
-        } while (!ServerConnection.isServerClosed);
+        } while (!serverConnection.isServerClosed());
     }
 
     public static Response manageInput(String input) {
