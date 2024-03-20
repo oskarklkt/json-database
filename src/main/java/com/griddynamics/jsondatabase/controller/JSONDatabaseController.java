@@ -8,6 +8,7 @@ import com.griddynamics.jsondatabase.server.response.Response;
 import com.griddynamics.jsondatabase.server.response.ValueResponse;
 import lombok.AllArgsConstructor;
 
+
 @AllArgsConstructor
 public class JSONDatabaseController {
     private final JSONDatabaseModel database;

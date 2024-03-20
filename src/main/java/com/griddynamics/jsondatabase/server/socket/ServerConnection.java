@@ -14,6 +14,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
 @Getter
 public class ServerConnection {
     private static final String address = "127.0.0.1";
@@ -29,11 +30,12 @@ public class ServerConnection {
         this.serverSocketFactory = factory;
         this.server = serverSocketFactory.createServerSocket(port, 50, InetAddress.getByName(address));
     }
-    public void init()  {
+
+    public void init() {
         try {
             socket = server.accept();
             input = new DataInputStream(socket.getInputStream());
-            output  = new DataOutputStream(socket.getOutputStream());
+            output = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -49,7 +51,6 @@ public class ServerConnection {
             Response s = receive();
             Gson gson = new Gson();
             output.writeUTF(gson.toJson(s));
-            server.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -74,5 +75,4 @@ public class ServerConnection {
             throw new RuntimeException(e);
         }
     }
-
 }

@@ -1,8 +1,10 @@
 package com.griddynamics.jsondatabase.server.response;
 
+
 import lombok.Getter;
 
 import java.util.Objects;
+
 
 @Getter
 public class Response {

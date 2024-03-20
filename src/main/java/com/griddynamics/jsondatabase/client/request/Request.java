@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.util.Objects;
 
+
 @Getter
 public class Request {
     private final String type;
@@ -41,4 +42,5 @@ public class Request {
     public int hashCode() {
         return Objects.hash(type, key, value);
     }
+
 }

@@ -5,7 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class ClientArgs {
-    @Parameter(names = {"--type", "-t"}, description = "Type of request (set, get, delete, exit)", required = true)
+    @Parameter(names = {"--input", "-in"}, description = "input file to read Request from")
+    private String input;
+    @Parameter(names = {"--type", "-t"}, description = "Type of request (set, get, delete, exit)")
     private String type;
 
     @Parameter(names = {"--key", "-k"}, description = "Key of the record in JSON database")
