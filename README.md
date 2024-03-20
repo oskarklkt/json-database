@@ -1,5 +1,48 @@
 # oklekot-JSON_Database 🗄️
 
+---
+
+## Quick start 🏎️
+### Server
+1. Run ServerSideApp!
+### Client
+2. Add command line arguments in ClientSideApp class (containing main() method) in configurations settings of current class and then run it.
+
+```
+-t {type} -k{key} -v{value}
+```
+##### Where: 
+1. -t {type} is mandatory, possible types: set, get, delete and should be a String value
+2. -k {key} is also mandatory, any String
+3. -v {value} is only mandatory in set command 
+##### Examples: 
+Here is what the set request format should look like:
+```
+{ "type": "set", "key": "Secret key", "value": "Secret value" }
+```
+The responses should be in the JSON format. Please consider the examples below.
+```
+{ "response": "OK" }
+```
+The get request
+```
+{ "type": "get", "key": "Secret key" }
+```
+The delete request
+```
+{ "type": "delete", "key": "Key that doesn't exist" }
+```
+In the case of a get request with a key stored in the database:
+```
+{ "response": "OK", "value": "Secret value" }
+```
+In the case of a get or delete request with a key that doesn't exist:
+```
+{ "response": "ERROR", "reason": "No such key" }
+```
+
+
+
 
 ## Project's stages overview👀:
 
@@ -52,13 +95,17 @@ Note: the server and the client are different programs that run separately. Your
 
 ##### Example
 The server should output something like this:
+```
 Server started!
 Received: Give me a record # 12
 Sent: A record # 12 was sent!
+```
 The client should output something like this:
+```
 Client started!
 Sent: Give me a record # 12
 Received: A record # 12 was sent!
+```
 
 ---
 
@@ -86,13 +133,13 @@ The server and the client are different programs that run separately. Your serve
 The greater-than symbol followed by a space (> ) represents the user input. Note that it's not part of the input.
 
 Starting the server:
-
+```
 java Main
 
 Server started!
-
+```
 Starting the clients:
-
+```
 java Main -t get -i 1
 
 Client started!
@@ -100,7 +147,7 @@ Client started!
 Sent: get 1
 
 Received: ERROR
-
+```
 ---
 
 ### Stage 4️⃣ Start work with JSON
@@ -112,32 +159,39 @@ In this stage, you should store the database as a Java JSON object.
 The keys should be strings (no more limited integer indexes), and the values should be strings, as well.
 
 Example of JSON database:
-
+```
 {
     "key1": "String value",
     "key2": 2,
     "key3": true
 }
+```
 Also, you should send to the server a valid JSON (as a string) which includes all the parameters needed to execute the request. Below are a few examples for the set, get, and delete requests. Don't worry about multiple lines: the GSON library can represent them as a single line. Also, don't worry about extra spaces before and after quotes.
 
 Here is what the set request format should look like:
-
+```
 { "type": "set", "key": "Secret key", "value": "Secret value" }
+```
 The responses should be in the JSON format. Please consider the examples below.
-
+```
 { "response": "OK" }
+```
 The get request
-
+```
 { "type": "get", "key": "Secret key" }
+```
 The delete request
-
+```
 { "type": "delete", "key": "Key that doesn't exist" }
+```
 In the case of a get request with a key stored in the database:
-
+```
 { "response": "OK", "value": "Secret value" }
+```
 In the case of a get or delete request with a key that doesn't exist:
-
+```
 { "response": "ERROR", "reason": "No such key" }
+```
 
 ##### Objectives
 Implement a Java JSON object to store the database records.
@@ -167,11 +221,11 @@ Lock writeLock = lock.writeLock();
 Every time you want to read the file, invoke readLock.lock(). After reading, invoke readLock.unlock(). Do the same with writeLock, but only when you want to change the data.
 
 Here are some examples of the input file contents:
-
+```
 {"type":"set","key":"name","value":"Kate"}
 {"type":"get","key":"name"}
 {"type":"delete","key":"name"}
-
+```
 ##### Objectives
 The server should keep the database on the hard drive in a db.json file which should be stored as the JSON file in the /server/data folder.
 Use executors at the server in order to simultaneously handle multiple requests. Writing to the database file should be protected by a lock as described in the description.
@@ -182,7 +236,7 @@ Implement the ability to read a request from a file. If the -in argument is foll
 Improve your database in this stage. It should be able to store not only strings but any JSON objects as values.
 
 The key should not only be a string since the user needs to retrieve part of the JSON value. For example, in the code snippet below, the user wants to get only the surname of the person:
-
+```
 {
     ... ,
 
@@ -192,23 +246,20 @@ The key should not only be a string since the user needs to retrieve part of the
     }
     ...
 }
+```
 Then, the user should type the full path to this field in a form of a JSON array: ["person", "surname"]. If the user wants to get the full person object, then they should type ["person"]. The user should be able to set separate values inside JSON values. For example, it should be possible to set only the surname using a key ["person", "surname"] and any value including another JSON. Moreover, the user should be able to set new values inside other JSON values. For example, using a key ["person", "age"] and a value 25, the person object should look like this:
-
+```
 {
-    ... ,
-
     "person": {
         "name": "Adam",
         "surname": "Smith",
         "age": 25
-
     }
-    ...
 }
+```
 If there are no root objects, the server should create them, too. For example, if the database does not have a "person1" key but the user set the value {"id1": 12, "id2": 14} for the key ["person1", "inside1", "inside2"], then the database will have the following structure:
 
-{
-    ... ,
+```
     "person1": {
         "inside1": {
             "inside2" : {
@@ -216,19 +267,15 @@ If there are no root objects, the server should create them, too. For example, i
                 "id2": 14
             }
         }
-    },
-    ...
-}
+```
 The deletion of objects should follow the same rules. If a user deletes the object above by the key ["person1", "inside1", "inside2], then only "inside2" should be deleted, not "inside1" or "person1". See the example below:
-
+```
 {
-    ... ,
     "person1": {
         "inside1": { }
     }
-
-    ...
 }
+```
 ##### Objectives
 Enhance your database with the ability to store any JSON objects as values as portrayed at the description.
 
