@@ -57,9 +57,10 @@ public class ServerConnection {
 
     public void exit() {
         try {
-            String s = OutputMessages.OK;
+            Response s = new Response(OutputMessages.OK);
             isServerClosed = true;
-            output.writeUTF(s);
+            Gson gson = new Gson();
+            output.writeUTF(gson.toJson(s));
             server.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
