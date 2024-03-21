@@ -1,48 +1,58 @@
 package com.griddynamics.jsondatabase.client.request;
+
+import com.google.gson.JsonPrimitive;
 import org.junit.jupiter.api.Test;
-
-import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class RequestTest {
 
+  @Test
+  void shouldSerializeRequestToJson() {
+    Request request =
+        new Request("testType", new JsonPrimitive("testKey"), new JsonPrimitive("testValue"));
+    String json = request.parseJSON();
+    assertEquals("{\"type\":\"testType\",\"key\":\"testKey\",\"value\":\"testValue\"}", json);
+  }
 
-    @Test
-    void parseJSONSetTest() {
-        //given
-        Request request = new Request("set", "Secret key", "Secret value");
-        //when
-        String expected = "{\"type\":\"set\",\"key\":\"Secret key\",\"value\":\"Secret value\"}";
-        String actual = request.parseJSON();
-        //then
-        assertEquals(expected, actual);
+  @Test
+  void shouldSerializeRequestWithNullFieldsToJson() {
+    Request request = new Request("testType", null, null);
+    String json = request.parseJSON();
+    assertEquals("{\"type\":\"testType\"}", json);
     }
 
-    @Test
-    void parseJSONGetTest() {
-        //given
-        Request request = new Request("get", "Secret key");
-        //when
-        String expected = "{\"type\":\"get\",\"key\":\"Secret key\"}";
-        String actual = request.parseJSON();
-        //then
-        assertEquals(expected, actual);
+  @Test
+  void equalsShouldBeSymmetric() {
+    Request request1 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
+    Request request2 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
+    assertTrue(request1.equals(request2) && request2.equals(request1));
     }
 
-    @Test
-    void parseJSONDeleteTest() {
-        //given
-        Request request = new Request("delete", "Key");
-        //when
-        String expected = "{\"type\":\"delete\",\"key\":\"Key\"}";
-        String actual = request.parseJSON();
-        //then
-        assertEquals(expected, actual);
+  @Test
+  void equalsShouldBeTransitive() {
+    Request request1 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
+    Request request2 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
+    Request request3 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
+    assertTrue(request1.equals(request2) && request2.equals(request3) && request1.equals(request3));
     }
 
-    @Test
-    void hashCodeTest() {
-        assertEquals(Objects.hash("set", "1", "val"),new Request("set", "1", "val").hashCode());
+  @Test
+  void equalsShouldReturnFalseForNull() {
+    Request request = new Request("type");
+    assertNotEquals(null, request);
+  }
+
+  @Test
+  void hashCodeShouldBeConsistent() {
+    Request request = new Request("type");
+    int initialHashCode = request.hashCode();
+    assertEquals(initialHashCode, request.hashCode());
+  }
+
+  @Test
+  void equalObjectsShouldHaveEqualHashCodes() {
+    Request request1 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
+    Request request2 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
+    assertTrue(request1.equals(request2) && (request1.hashCode() == request2.hashCode()));
     }
 }

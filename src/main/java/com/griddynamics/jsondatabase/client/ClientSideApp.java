@@ -8,17 +8,14 @@ import com.griddynamics.jsondatabase.client.socket.ClientConnection;
 import com.beust.jcommander.JCommander;
 
 public class ClientSideApp {
-    public static void main(String[] args) {
-        System.out.println(OutputMessages.CLIENT_STARTED);
-        ClientConnection clientConnection = new ClientConnection();
-        ClientArgs clientArgs = new ClientArgs();
-        JCommander.newBuilder()
-                .addObject(clientArgs)
-                .build()
-                .parse(args);
-        Request request = InputParser.parseRequest(clientArgs);
-        String requestJSON = request.parseJSON();
-        clientConnection.send(requestJSON);
-        clientConnection.receive();
-    }
+  public static void main(String[] args) {
+    System.out.println(OutputMessages.CLIENT_STARTED);
+    ClientConnection clientConnection = new ClientConnection();
+    ClientArgs clientArgs = new ClientArgs();
+    JCommander.newBuilder().addObject(clientArgs).build().parse(args);
+    Request request = InputParser.parseRequest(clientArgs);
+    String requestJSON = request.parseJSON();
+    clientConnection.send(requestJSON);
+    clientConnection.receive();
+  }
 }

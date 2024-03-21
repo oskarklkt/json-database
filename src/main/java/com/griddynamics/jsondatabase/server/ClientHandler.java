@@ -5,21 +5,20 @@ import com.griddynamics.jsondatabase.server.socket.ServerConnection;
 import java.io.IOException;
 
 public class ClientHandler extends Thread {
+  final ServerConnection serverConnection;
 
-    final ServerConnection serverConnection;
+  public ClientHandler(ServerConnection serverConnection) {
+    this.serverConnection = serverConnection;
+  }
 
-
-    public ClientHandler(ServerConnection serverConnection) {
-        this.serverConnection = serverConnection;
+  @Override
+  public void run() {
+    serverConnection.init();
+    serverConnection.send();
+    try {
+      serverConnection.socket.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
-    @Override
-    public void run() {
-        serverConnection.init();
-        serverConnection.send();
-        try {
-            serverConnection.socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+  }
 }

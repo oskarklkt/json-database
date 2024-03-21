@@ -6,7 +6,8 @@ import java.net.ServerSocket;
 
 public class DefaultServerSocketFactory implements ServerSocketFactory {
 
-    public ServerSocket createServerSocket(int port, int backlog, InetAddress address) throws IOException {
-        return new ServerSocket(port, backlog, address);
-    }
+  public ServerSocket createServerSocket(int port, int backlog, InetAddress address)
+      throws IOException {
+    return new ServerSocket(port, backlog, address);
+  }
 }

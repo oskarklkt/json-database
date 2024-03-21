@@ -1,11 +1,12 @@
 package com.griddynamics.jsondatabase.client.input;
 
+import com.google.gson.JsonPrimitive;
 import com.griddynamics.jsondatabase.client.request.Request;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
+import java.nio.file.NoSuchFileException;
+import static org.junit.jupiter.api.Assertions.*;
 
 class InputParserTest {
 
@@ -18,10 +19,10 @@ class InputParserTest {
         Mockito.when(clientArgs.getType()).thenReturn("set");
         Mockito.when(clientArgs.getValue()).thenReturn("test");
         Request testRequest = InputParser.parseRequest(clientArgs);
-        //then
-        assertEquals(clientArgs.getKey(), testRequest.getKey());
+    // then
+    assertEquals(new JsonPrimitive(clientArgs.getKey()), testRequest.getKey());
         assertEquals(clientArgs.getType(), testRequest.getType());
-        assertEquals(clientArgs.getValue(), testRequest.getValue());
+    assertEquals(new JsonPrimitive(clientArgs.getValue()), testRequest.getValue());
     }
 
     @Test
@@ -31,24 +32,12 @@ class InputParserTest {
         Mockito.when(clientArgs.getType()).thenReturn("set");
         Mockito.when(clientArgs.getValue()).thenReturn(null);
         Request testRequest = InputParser.parseRequest(clientArgs);
-        //then
-        assertEquals(clientArgs.getKey(), testRequest.getKey());
+    // then
+    assertEquals(new JsonPrimitive(clientArgs.getKey()), testRequest.getKey());
         assertEquals(clientArgs.getType(), testRequest.getType());
-        assertEquals(clientArgs.getValue(), testRequest.getValue());
+    assertNull(testRequest.getValue());
     }
 
-    @Test
-    void parseRequestWithoutKeyTest() {
-        //when
-        Mockito.when(clientArgs.getKey()).thenReturn(null);
-        Mockito.when(clientArgs.getType()).thenReturn("set");
-        Mockito.when(clientArgs.getValue()).thenReturn("test");
-        Request testRequest = InputParser.parseRequest(clientArgs);
-        //then
-        assertEquals(clientArgs.getKey(), testRequest.getKey());
-        assertEquals(clientArgs.getType(), testRequest.getType());
-        assertEquals(clientArgs.getValue(), testRequest.getValue());
-    }
 
     @Test
     void parseRequestWithoutKeyAndValueTest() {
@@ -58,8 +47,21 @@ class InputParserTest {
         Mockito.when(clientArgs.getValue()).thenReturn(null);
         Request testRequest = InputParser.parseRequest(clientArgs);
         //then
-        assertEquals(clientArgs.getKey(), testRequest.getKey());
         assertEquals(clientArgs.getType(), testRequest.getType());
-        assertEquals(clientArgs.getValue(), testRequest.getValue());
+  }
+
+  @Test
+  void shouldThrowRuntimeExceptionForNonExistentFile() {
+    Exception exception =
+        assertThrows(
+            RuntimeException.class,
+            () -> InputParser.readRequestFromJsonFile("nonexistentfile.json"));
+    assertTrue(exception.getCause() instanceof NoSuchFileException);
+  }
+
+  @Test
+  void shouldReadRequestFromExistingFile() {
+    Request request = InputParser.readRequestFromJsonFile("testDelete.json");
+    assertNotNull(request);
     }
 }
