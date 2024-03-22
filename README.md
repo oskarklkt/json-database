@@ -3,14 +3,31 @@
 ---
 
 ## Quick start 🏎️
+
+<details><summary>Click to expand</summary>
+
 ### Server
 1. Run ServerSideApp!
 ### Client
 2. Add command line arguments in ClientSideApp class (containing main() method) in configurations settings of current class and then run it.
 
+
+When inserting commands:
 ```
 -t {type} -k{key} -v{value}
 ```
+When getting commands from .json file:
+```
+-in {file name}       
+```
+
+It is also possible to put/get nested JSON objects like this:
+```
+Sent: {"type":"get","key":["person","name"]}
+Received: {"response":"OK","value":"Elon Musk"}
+```
+_MORE EXAMPLES UNDER STAGE 6 OVERVIEW_
+
 ##### Where: 
 1. -t {type} is mandatory, possible types: set, get, delete and should be a String value
 2. -k {key} is also mandatory, any String
@@ -40,11 +57,10 @@ In the case of a get or delete request with a key that doesn't exist:
 ```
 { "response": "ERROR", "reason": "No such key" }
 ```
-
-
-
+</details>
 
 ## Project's stages overview👀:
+<details><summary>Click to expand</summary>
 
 ### Hyperskill project: JSON_Database
 more information: https://hyperskill.org/projects/65?track=17
@@ -278,11 +294,79 @@ The deletion of objects should follow the same rules. If a user deletes the obje
 ```
 ##### Objectives
 Enhance your database with the ability to store any JSON objects as values as portrayed at the description.
+##### Examples
+Starting the server:
+```
+> java Main
+Server started!
+```
+There is no need to format JSON in the output.
 
+Starting the clients:
+```
+> java Main -t set -k 1 -v "Hello world!" 
+Client started!
+Sent: {"type":"set","key":"1","value":"Hello world!"}
+Received: {"response":"OK"}
+> java Main -in setFile.json 
+Client started!
+Sent:
+{
+   "type":"set",
+   "key":"person",
+   "value":{
+      "name":"Elon Musk",
+      "car":{
+         "model":"Tesla Roadster",
+         "year":"2018"
+      },
+      "rocket":{
+         "name":"Falcon 9",
+         "launches":"87"
+      }
+   }
+}
+Received: {"response":"OK"}
+```
+```
+> java Main -in getFile.json 
+Client started!
+Sent: {"type":"get","key":["person","name"]}
+Received: {"response":"OK","value":"Elon Musk"}
+```
+```
+> java Main -in updateFile.json 
+Client started!
+Sent: {"type":"set","key":["person","rocket","launches"],"value":"88"}
+Received: {"response":"OK"}
+```
+```
+> java Main -in secondGetFile.json 
+Client started!
+Sent: {"type":"get","key":["person"]}
+Received:
+{
+   "response":"OK",
+   "value":{
+      "name":"Elon Musk",
+      "car":{
+         "model":"Tesla Roadster",
+         "year":"2018"
+      },
+      "rocket":{
+         "name":"Falcon 9",
+         "launches":"88"
+      }
+   }
+}
+```
+</details>
 
+## Tests coverage ✅
 
-
-
+<details><summary>Click to expand</summary>
+![Screenshot_2024-03-22_at_19.35.25](/uploads/50b4ed40fd6c0c80fe98e460ac9b1039/Screenshot_2024-03-22_at_19.35.25.png)
+</details>
 
 
 
