@@ -19,7 +19,7 @@ class ClientHandlerTest {
     ClientHandler clientHandler = new ClientHandler(mockServerConnection);
 
     // When
-    clientHandler.start();
+    clientHandler.run();
     // Then
     verify(mockServerConnection).init();
     verify(mockServerConnection).send();
