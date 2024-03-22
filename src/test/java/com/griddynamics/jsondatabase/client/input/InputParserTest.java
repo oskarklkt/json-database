@@ -56,7 +56,7 @@ class InputParserTest {
         assertThrows(
             RuntimeException.class,
             () -> InputParser.readRequestFromJsonFile("nonexistentfile.json"));
-    assertTrue(exception.getCause() instanceof NoSuchFileException);
+    assertInstanceOf(NoSuchFileException.class, exception.getCause());
   }
 
   @Test
