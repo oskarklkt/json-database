@@ -6,6 +6,7 @@ import com.griddynamics.jsondatabase.server.messages.OutputMessages;
 import com.griddynamics.jsondatabase.server.response.Response;
 import com.griddynamics.jsondatabase.server.socket.Factory.ServerSocketFactory;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -14,6 +15,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+@Setter
 @Getter
 public class ServerConnection {
   private static final String address = "127.0.0.1";
@@ -23,7 +25,7 @@ public class ServerConnection {
   public Socket socket;
   private DataInputStream input;
   private DataOutputStream output;
-  private boolean isServerClosed = false;
+  boolean isServerClosed = false;
 
   public ServerConnection(ServerSocketFactory factory) throws IOException {
     this.serverSocketFactory = factory;

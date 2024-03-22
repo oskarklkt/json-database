@@ -6,10 +6,13 @@ import com.griddynamics.jsondatabase.client.messages.OutputMessages;
 import com.griddynamics.jsondatabase.client.request.Request;
 import com.griddynamics.jsondatabase.client.socket.ClientConnection;
 import com.beust.jcommander.JCommander;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ClientSideApp {
   public static void main(String[] args) {
-    System.out.println(OutputMessages.CLIENT_STARTED);
+
+    log.info(OutputMessages.CLIENT_STARTED);
     ClientConnection clientConnection = new ClientConnection();
     ClientArgs clientArgs = new ClientArgs();
     JCommander.newBuilder().addObject(clientArgs).build().parse(args);

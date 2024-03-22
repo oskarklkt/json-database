@@ -15,6 +15,12 @@ public class ClientHandler extends Thread {
   public void run() {
     serverConnection.init();
     serverConnection.send();
+    if (serverConnection.socket != null) {
+      closeSocket();
+    }
+  }
+
+  public void closeSocket() {
     try {
       serverConnection.socket.close();
     } catch (IOException e) {

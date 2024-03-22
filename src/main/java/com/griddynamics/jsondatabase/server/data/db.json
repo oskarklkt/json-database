@@ -1,6 +1,5 @@
 {
   "text": "Some text here",
-  "1": "Hello world!",
   "person": {
     "name": "Elon Musk",
     "car": {
@@ -10,5 +9,6 @@
       "name": "Falcon 9",
       "launches": "88"
     }
-  }
+  },
+  "1": "val"
 }

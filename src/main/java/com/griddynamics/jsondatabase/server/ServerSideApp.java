@@ -9,11 +9,15 @@ import com.griddynamics.jsondatabase.server.response.Response;
 import com.griddynamics.jsondatabase.server.socket.Factory.DefaultServerSocketFactory;
 import com.griddynamics.jsondatabase.server.socket.Factory.ServerSocketFactory;
 import com.griddynamics.jsondatabase.server.socket.ServerConnection;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Setter
+@Slf4j
 public class ServerSideApp {
 
   static InputHandler inputHandler = new InputHandler();
@@ -22,7 +26,7 @@ public class ServerSideApp {
   private static final ServerSocketFactory socketFactory = new DefaultServerSocketFactory();
 
   public static void main(String[] args) {
-    System.out.println(OutputMessages.SERVER_STARTED);
+    log.info(OutputMessages.SERVER_STARTED);
     startApp();
   }
 
