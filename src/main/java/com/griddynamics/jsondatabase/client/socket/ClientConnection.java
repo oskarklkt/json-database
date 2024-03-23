@@ -25,7 +25,8 @@ public class ClientConnection {
   }
 
   private void init() {
-    try (Socket socket = new Socket(InetAddress.getByName(address), port)) {
+    try {
+      Socket socket = new Socket(InetAddress.getByName(address), port);
       input = new DataInputStream(socket.getInputStream());
       output = new DataOutputStream(socket.getOutputStream());
     } catch (IOException e) {

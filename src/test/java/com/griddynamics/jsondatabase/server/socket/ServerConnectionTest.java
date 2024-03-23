@@ -27,10 +27,9 @@ class ServerConnectionTest {
 
     // When
     when(factory.createServerSocket(eq(port), eq(50), eq(inetAddress))).thenReturn(serverSocket);
-    ServerConnection serverConnection = new ServerConnection(factory);
+    new ServerConnection(factory);
     // Then
     verify(factory).createServerSocket(port, 50, inetAddress);
-    serverConnection.server.close();
   }
 
   @Test
