@@ -5,7 +5,6 @@ import com.griddynamics.jsondatabase.client.request.Request;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import java.nio.file.NoSuchFileException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InputParserTest {
