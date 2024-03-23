@@ -1,6 +1,7 @@
 package com.griddynamics.jsondatabase.server;
 
 import com.griddynamics.jsondatabase.server.socket.ServerConnection;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 
@@ -20,11 +21,8 @@ public class ClientHandler extends Thread {
     }
   }
 
+  @SneakyThrows
   public void closeSocket() {
-    try {
-      serverConnection.socket.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    serverConnection.socket.close();
   }
 }

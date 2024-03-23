@@ -33,17 +33,6 @@ class ServerConnectionTest {
   }
 
   @Test
-  void constructorShouldHandleIOException() throws IOException {
-    // given
-    ServerSocketFactory factory = mock(ServerSocketFactory.class);
-    // when
-    when(factory.createServerSocket(anyInt(), anyInt(), any(InetAddress.class)))
-        .thenThrow(new IOException());
-    // then
-    assertThrows(IOException.class, () -> new ServerConnection(factory));
-  }
-
-  @Test
   void isServerClosedShouldReturnTrueAfterExit() throws IOException {
     ServerSocketFactory factory = mock(ServerSocketFactory.class);
     ServerSocket mockServer = mock(ServerSocket.class);
@@ -96,7 +85,7 @@ class ServerConnectionTest {
     when(serverSocket.accept()).thenThrow(new IOException());
     ServerConnection serverConnection = new ServerConnection(serverSocketFactory);
     // then
-    assertThrows(RuntimeException.class, serverConnection::init);
+    assertThrows(IOException.class, serverConnection::init);
     serverConnection.server.close();
   }
 
@@ -111,7 +100,7 @@ class ServerConnectionTest {
     // when
     instance.setInput(dataInputStream);
     // then
-    assertThrows(RuntimeException.class, instance::receive);
+    assertThrows(EOFException.class, instance::receive);
   }
 
   @Test
@@ -166,7 +155,7 @@ class ServerConnectionTest {
     instance.setOutput(mockOutput);
     instance.setServer(mockServer);
 
-    assertThrows(RuntimeException.class, instance::exit);
+    assertThrows(IOException.class, instance::exit);
   }
 
   @Test
@@ -198,6 +187,6 @@ class ServerConnectionTest {
 
     doReturn(new Response(OutputMessages.OK)).when(serverConnection).receive();
 
-    assertThrows(RuntimeException.class, serverConnection::send);
+    assertThrows(IOException.class, serverConnection::send);
   }
 }

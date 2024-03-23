@@ -2,11 +2,11 @@ package com.griddynamics.jsondatabase.client.request;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.util.Objects;
-
 @Getter
+@EqualsAndHashCode
 public class Request {
   private final String type;
   private JsonElement key;
@@ -29,19 +29,5 @@ public class Request {
   public String parseJSON() {
     Gson gson = new Gson();
     return gson.toJson(this);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof Request request)) return false;
-    return Objects.equals(type, request.type)
-        && Objects.equals(key, request.key)
-        && Objects.equals(value, request.value);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(type, key, value);
   }
 }

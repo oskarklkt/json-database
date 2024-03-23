@@ -10,9 +10,9 @@ import com.griddynamics.jsondatabase.server.socket.Factory.DefaultServerSocketFa
 import com.griddynamics.jsondatabase.server.socket.Factory.ServerSocketFactory;
 import com.griddynamics.jsondatabase.server.socket.ServerConnection;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,22 +30,15 @@ public class ServerSideApp {
     startApp();
   }
 
+  @SneakyThrows
   public static void startApp() {
     ExecutorService executorService = Executors.newSingleThreadExecutor();
-    try {
-      serverConnection = new ServerConnection(socketFactory);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    serverConnection = new ServerConnection(socketFactory);
     do {
       ClientHandler clientHandler = new ClientHandler(serverConnection);
       executorService.execute(clientHandler);
     } while (!serverConnection.isServerClosed());
-    try {
-      serverConnection.server.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    serverConnection.server.close();
   }
 
   public static Response manageInput(String input) {

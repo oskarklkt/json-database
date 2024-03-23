@@ -15,12 +15,13 @@ import static org.mockito.Mockito.*;
 
 class JSONDatabaseControllerTest {
   private JSONDatabaseModel mockDatabase;
-    private JSONDatabaseController controller;
-    @BeforeEach
-    void init() {
+  private JSONDatabaseController controller;
+
+  @BeforeEach
+  void init() {
     mockDatabase = mock(JSONDatabaseModel.class);
     controller = new JSONDatabaseController(mockDatabase);
-    }
+  }
 
   @Test
   void shouldSetDataSuccessfully() {
@@ -31,7 +32,7 @@ class JSONDatabaseControllerTest {
     // then
     verify(mockDatabase).setData(request.getKey(), request.getValue());
     assertEquals(OutputMessages.OK, response.getResponse());
-    }
+  }
 
   @Test
   void shouldReturnDataWhenKeyExists() {
@@ -45,7 +46,7 @@ class JSONDatabaseControllerTest {
     assertInstanceOf(ValueResponse.class, response);
     assertEquals(OutputMessages.OK, response.getResponse());
     assertEquals("value", ((ValueResponse) response).getValue().getAsString());
-    }
+  }
 
   @Test
   void shouldReturnErrorWhenKeyDoesNotExist() {
@@ -89,5 +90,5 @@ class JSONDatabaseControllerTest {
     assertInstanceOf(ErrorResponse.class, response);
     assertEquals(OutputMessages.ERROR, response.getResponse());
     assertEquals(OutputMessages.NO_SUCH_KEY, ((ErrorResponse) response).getReason());
-    }
+  }
 }

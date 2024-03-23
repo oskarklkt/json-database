@@ -19,14 +19,14 @@ class RequestTest {
     Request request = new Request("testType", null, null);
     String json = request.parseJSON();
     assertEquals("{\"type\":\"testType\"}", json);
-    }
+  }
 
   @Test
   void equalsShouldBeSymmetric() {
     Request request1 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
     Request request2 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
     assertTrue(request1.equals(request2) && request2.equals(request1));
-    }
+  }
 
   @Test
   void equalsShouldBeTransitive() {
@@ -34,7 +34,7 @@ class RequestTest {
     Request request2 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
     Request request3 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
     assertTrue(request1.equals(request2) && request2.equals(request3) && request1.equals(request3));
-    }
+  }
 
   @Test
   void equalsShouldReturnFalseForNull() {
@@ -54,5 +54,5 @@ class RequestTest {
     Request request1 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
     Request request2 = new Request("type", new JsonPrimitive("key"), new JsonPrimitive("value"));
     assertTrue(request1.equals(request2) && (request1.hashCode() == request2.hashCode()));
-    }
+  }
 }

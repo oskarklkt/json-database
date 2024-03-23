@@ -4,8 +4,7 @@ import com.griddynamics.jsondatabase.client.data.DataConstants;
 import com.griddynamics.jsondatabase.client.request.Request;
 import com.google.gson.Gson;
 import com.google.gson.JsonPrimitive;
-
-import java.io.IOException;
+import lombok.SneakyThrows;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -27,15 +26,12 @@ public class InputParser {
     }
   }
 
+  @SneakyThrows
   public static Request readRequestFromJsonFile(String file) {
     Gson gson = new Gson();
     Request request;
-    try {
-      String json = Files.readString(Paths.get(DataConstants.PATH + file));
-      request = gson.fromJson(json, Request.class);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    String json = Files.readString(Paths.get(DataConstants.PATH + file));
+    request = gson.fromJson(json, Request.class);
     return request;
   }
 }

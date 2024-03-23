@@ -7,10 +7,10 @@ import com.griddynamics.jsondatabase.server.response.Response;
 import com.griddynamics.jsondatabase.server.socket.Factory.ServerSocketFactory;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -27,52 +27,41 @@ public class ServerConnection {
   private DataOutputStream output;
   boolean isServerClosed = false;
 
-  public ServerConnection(ServerSocketFactory factory) throws IOException {
+  @SneakyThrows
+  public ServerConnection(ServerSocketFactory factory) {
     this.serverSocketFactory = factory;
     this.server = serverSocketFactory.createServerSocket(port, 50, InetAddress.getByName(address));
   }
 
+  @SneakyThrows
   public void init() {
-    try {
-      socket = server.accept();
-      input = new DataInputStream(socket.getInputStream());
-      output = new DataOutputStream(socket.getOutputStream());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    socket = server.accept();
+    input = new DataInputStream(socket.getInputStream());
+    output = new DataOutputStream(socket.getOutputStream());
   }
 
   public boolean isServerClosed() {
     return isServerClosed;
   }
 
+  @SneakyThrows
   public void send() {
-    try {
-      Response s = receive();
-      Gson gson = new Gson();
-      output.writeUTF(gson.toJson(s));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    Response s = receive();
+    Gson gson = new Gson();
+    output.writeUTF(gson.toJson(s));
   }
 
+  @SneakyThrows
   public void exit() {
-    try {
-      Response s = new Response(OutputMessages.OK);
-      isServerClosed = true;
-      Gson gson = new Gson();
-      output.writeUTF(gson.toJson(s));
-      server.close();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    Response s = new Response(OutputMessages.OK);
+    isServerClosed = true;
+    Gson gson = new Gson();
+    output.writeUTF(gson.toJson(s));
+    server.close();
   }
 
+  @SneakyThrows
   public Response receive() {
-    try {
-      return ServerSideApp.manageInput(input.readUTF());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return ServerSideApp.manageInput(input.readUTF());
   }
 }

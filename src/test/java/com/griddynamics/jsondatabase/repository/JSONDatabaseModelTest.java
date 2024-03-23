@@ -21,7 +21,7 @@ class JSONDatabaseModelTest {
     model.getReadLock().unlock();
     model.getWriteLock().lock();
     model.getWriteLock().unlock();
-    }
+  }
 
   @Test
   void shouldReturnElementWhenKeyIsJsonPrimitiveAndExists() {
@@ -38,7 +38,7 @@ class JSONDatabaseModelTest {
     // then
     assertNotNull(result);
     assertEquals("value", result.getAsString());
-    }
+  }
 
   @Test
   void shouldReturnNullWhenKeyIsJsonPrimitiveAndDoesNotExist() {
@@ -53,7 +53,7 @@ class JSONDatabaseModelTest {
     JsonElement result = model.getData(key);
     // then
     assertNull(result);
-    }
+  }
 
   @Test
   void shouldReturnNullWhenKeysDoNotExistInJsonArrayAndNotCreating() {
@@ -64,7 +64,7 @@ class JSONDatabaseModelTest {
     mockDatabase.add("existentElement", intermediateObject);
     // when
     when(mockFileManager.updateDatabase()).thenReturn(mockDatabase);
-        JSONDatabaseModel model = new JSONDatabaseModel();
+    JSONDatabaseModel model = new JSONDatabaseModel();
     model.setJsonFileManager(mockFileManager);
     JsonArray arrayKey = new JsonArray();
     arrayKey.add("existentElement");
@@ -146,7 +146,7 @@ class JSONDatabaseModelTest {
     assertEquals(OutputMessages.OK, result);
     assertFalse(mockDatabase.has("key"));
     verify(mockFileManager).updateJSON(mockDatabase);
-    }
+  }
 
   @Test
   void shouldNotDeleteDataWhenJsonPrimitiveKeyDoesNotExist() {
