@@ -1,4 +1,4 @@
-package com.griddynamics.jsondatabase.server.socket.Factory;
+package com.griddynamics.jsondatabase.server.socket.factory;
 
 import lombok.SneakyThrows;
 

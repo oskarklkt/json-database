@@ -9,11 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 public class JSONFileManager {
 
-  public JsonObject updateDatabase() {
+  public Optional<JsonObject> updateDatabase() {
     Gson gson = new Gson();
     JsonObject database = null;
     try (FileReader reader = new FileReader(DataConstants.PATH)) {
@@ -21,7 +22,7 @@ public class JSONFileManager {
     } catch (IOException e) {
       log.error(e.getMessage());
     }
-    return database;
+    return Optional.ofNullable(database);
   }
 
   public void updateJSON(JsonObject database) {

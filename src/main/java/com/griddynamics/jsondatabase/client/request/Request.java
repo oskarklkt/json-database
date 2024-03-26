@@ -9,20 +9,18 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class Request {
   private final String type;
-  private JsonElement key;
-  private JsonElement value;
-
-  public Request(String type) {
-    this.type = type;
-  }
+  private final JsonElement key;
+  private final JsonElement value;
 
   public Request(String type, JsonElement key) {
-    this(type);
+    this.type = type;
     this.key = key;
+    this.value = null;
   }
 
   public Request(String type, JsonElement key, JsonElement value) {
-    this(type, key);
+    this.type = type;
+    this.key = key;
     this.value = value;
   }
 

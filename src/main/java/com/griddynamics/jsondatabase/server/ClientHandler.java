@@ -3,8 +3,6 @@ package com.griddynamics.jsondatabase.server;
 import com.griddynamics.jsondatabase.server.socket.ServerConnection;
 import lombok.SneakyThrows;
 
-
-
 public class ClientHandler extends Thread {
   final ServerConnection serverConnection;
 

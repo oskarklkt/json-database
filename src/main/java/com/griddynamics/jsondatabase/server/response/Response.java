@@ -9,4 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Response {
   private final String response;
+
 }
+
+

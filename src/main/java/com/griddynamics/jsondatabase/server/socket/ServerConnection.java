@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.griddynamics.jsondatabase.server.ServerSideApp;
 import com.griddynamics.jsondatabase.server.messages.OutputMessages;
 import com.griddynamics.jsondatabase.server.response.Response;
-import com.griddynamics.jsondatabase.server.socket.Factory.ServerSocketFactory;
+import com.griddynamics.jsondatabase.server.socket.factory.ServerSocketFactory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;

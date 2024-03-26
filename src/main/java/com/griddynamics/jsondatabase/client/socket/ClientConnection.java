@@ -34,13 +34,13 @@ public class ClientConnection {
 
   @SneakyThrows
   public void send(String message) {
-    log.info(OutputMessages.SENT.formatted(message) + '\n');
+    log.info("{} {}", OutputMessages.SENT.formatted(message), System.lineSeparator());
     output.writeUTF(message);
   }
 
   @SneakyThrows
   public void receive() {
     String message = input.readUTF();
-    log.info(OutputMessages.RECEIVED.formatted(message) + '\n');
+    log.info("{} {}", OutputMessages.RECEIVED.formatted(message), System.lineSeparator());
   }
 }

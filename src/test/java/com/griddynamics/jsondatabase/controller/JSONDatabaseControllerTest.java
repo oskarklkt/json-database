@@ -1,94 +1,202 @@
 package com.griddynamics.jsondatabase.controller;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.griddynamics.jsondatabase.client.request.Request;
-import com.griddynamics.jsondatabase.repository.JSONDatabaseModel;
+import com.griddynamics.jsondatabase.repository.JSONFileManager;
 import com.griddynamics.jsondatabase.server.messages.OutputMessages;
-import com.griddynamics.jsondatabase.server.response.ErrorResponse;
-import com.griddynamics.jsondatabase.server.response.Response;
-import com.griddynamics.jsondatabase.server.response.ValueResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class JSONDatabaseControllerTest {
-  private JSONDatabaseModel mockDatabase;
-  private JSONDatabaseController controller;
+
+  JSONDatabaseController controller;
 
   @BeforeEach
-  void init() {
-    mockDatabase = mock(JSONDatabaseModel.class);
-    controller = new JSONDatabaseController(mockDatabase);
+  void setUp() {
+    controller = new JSONDatabaseController();
   }
 
   @Test
-  void shouldSetDataSuccessfully() {
+  void constructorShouldInitializeFieldsProperly() {
+    // constructor creates writeLock and readLock, that's why we only check if it compiles right
+    JSONDatabaseController controller = new JSONDatabaseController();
+    controller.getReadLock().lock();
+    controller.getReadLock().unlock();
+    controller.getWriteLock().lock();
+    controller.getWriteLock().unlock();
+  }
+
+  @Test
+  void shouldReturnElementWhenKeyIsJsonPrimitiveAndExists() {
     // given
-    Request request = new Request("set", new JsonPrimitive("key"), new JsonPrimitive("value"));
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    JsonObject mockDatabase = new JsonObject();
+    mockDatabase.addProperty("key", "value");
     // when
-    Response response = controller.set(request);
+    when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
+    controller.setJsonFileManager(mockFileManager);
+    JsonElement key = new JsonPrimitive("key");
+    JsonElement result = controller.getData(key);
     // then
-    verify(mockDatabase).setData(request.getKey(), request.getValue());
-    assertEquals(OutputMessages.OK, response.getResponse());
+    assertNotNull(result);
+    assertEquals("value", result.getAsString());
   }
 
   @Test
-  void shouldReturnDataWhenKeyExists() {
+  void shouldReturnNullWhenKeyIsJsonPrimitiveAndDoesNotExist() {
     // given
-    Request request = new Request("get", new JsonPrimitive("key"));
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    JsonObject mockDatabase = new JsonObject();
     // when
-    when(mockDatabase.getData(any())).thenReturn(new JsonPrimitive("value"));
-    JSONDatabaseController controller = new JSONDatabaseController(mockDatabase);
-    Response response = controller.get(request);
+    when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
+    controller.setJsonFileManager(mockFileManager);
+    JsonElement key = new JsonPrimitive("nonexistentKey");
+    JsonElement result = controller.getData(key);
     // then
-    assertInstanceOf(ValueResponse.class, response);
-    assertEquals(OutputMessages.OK, response.getResponse());
-    assertEquals("value", ((ValueResponse) response).getValue().getAsString());
+    assertNull(result);
   }
 
   @Test
-  void shouldReturnErrorWhenKeyDoesNotExist() {
-    JSONDatabaseModel mockDatabase = mock(JSONDatabaseModel.class);
-    when(mockDatabase.getData(any())).thenReturn(null);
-
-    JSONDatabaseController controller = new JSONDatabaseController(mockDatabase);
-    Request request = new Request("get", new JsonPrimitive("key"));
-
-    Response response = controller.get(request);
-
-    assertInstanceOf(ErrorResponse.class, response);
-    assertEquals(OutputMessages.ERROR, response.getResponse());
-    assertEquals(OutputMessages.NO_SUCH_KEY, ((ErrorResponse) response).getReason());
+  void shouldReturnNullWhenKeysDoNotExistInJsonArrayAndNotCreating() {
+    // given
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    JsonObject mockDatabase = new JsonObject();
+    JsonObject intermediateObject = new JsonObject();
+    mockDatabase.add("existentElement", intermediateObject);
+    // when
+    when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
+    controller.setJsonFileManager(mockFileManager);
+    JsonArray arrayKey = new JsonArray();
+    arrayKey.add("existentElement");
+    arrayKey.add("nonexistentNestedElement");
+    JsonElement result = controller.getData(arrayKey);
+    // then
+    assertNull(result);
   }
 
   @Test
-  void shouldDeleteDataSuccessfully() {
-    JSONDatabaseModel mockDatabase = mock(JSONDatabaseModel.class);
-    when(mockDatabase.deleteData(any())).thenReturn(OutputMessages.OK);
-
-    JSONDatabaseController controller = new JSONDatabaseController(mockDatabase);
-    Request request = new Request("delete", new JsonPrimitive("key"));
-
-    Response response = controller.delete(request);
-
-    verify(mockDatabase).deleteData(request.getKey());
-    assertEquals(OutputMessages.OK, response.getResponse());
+  void shouldCreateDatabaseAndSetDataIfDatabaseIsNull() {
+    // given
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    // when
+    when(mockFileManager.updateDatabase()).thenReturn(null);
+    controller.setJsonFileManager(mockFileManager);
+    JsonPrimitive key = new JsonPrimitive("key");
+    JsonPrimitive value = new JsonPrimitive("value");
+    controller.setData(key, value);
+    ArgumentCaptor<JsonObject> captor = ArgumentCaptor.forClass(JsonObject.class);
+    verify(mockFileManager).updateJSON(captor.capture());
+    JsonObject updatedDatabase = captor.getValue();
+    // then
+    assertTrue(updatedDatabase.has(key.getAsString()));
+    assertEquals(value, updatedDatabase.get(key.getAsString()));
   }
 
   @Test
-  void shouldReturnErrorWhenDeletingNonExistingKey() {
-    JSONDatabaseModel mockDatabase = mock(JSONDatabaseModel.class);
-    when(mockDatabase.deleteData(any())).thenReturn(OutputMessages.ERROR);
+  void shouldSetDataWithJsonPrimitiveKey() {
+    // given
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    JsonObject mockDatabase = new JsonObject();
+    // when
+    when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
+    controller.setJsonFileManager(mockFileManager);
+    JsonPrimitive key = new JsonPrimitive("key");
+    JsonPrimitive value = new JsonPrimitive("value");
+    controller.setData(key, value);
+    // then
+    verify(mockFileManager).updateJSON(mockDatabase);
+    assertEquals(value, mockDatabase.get(key.getAsString()));
+  }
 
-    JSONDatabaseController controller = new JSONDatabaseController(mockDatabase);
-    Request request = new Request("delete", new JsonPrimitive("key"));
+  @Test
+  void shouldSetDataWithJsonArrayKey() {
+    // given
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    JsonObject mockDatabase = new JsonObject();
+    // when
+    when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
+    controller.setJsonFileManager(mockFileManager);
+    JsonArray key = new JsonArray();
+    key.add("level1");
+    key.add("level2");
+    JsonPrimitive value = new JsonPrimitive("value");
+    controller.setData(key, value);
+    // then
+    verify(mockFileManager).updateJSON(mockDatabase);
+    assertNotNull(mockDatabase.getAsJsonObject("level1").get("level2"));
+    assertEquals(value, mockDatabase.getAsJsonObject("level1").get("level2"));
+  }
 
-    Response response = controller.delete(request);
+  @Test
+  void shouldDeleteDataWithJsonPrimitiveKey() {
+    // given
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    JsonObject mockDatabase = new JsonObject();
+    mockDatabase.addProperty("key", "value");
+    // when
+    when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
+    controller.setJsonFileManager(mockFileManager);
+    JsonPrimitive key = new JsonPrimitive("key");
+    String result = controller.deleteData(key);
+    // then
+    assertEquals(OutputMessages.OK, result);
+    assertFalse(mockDatabase.has("key"));
+    verify(mockFileManager).updateJSON(mockDatabase);
+  }
 
-    assertInstanceOf(ErrorResponse.class, response);
-    assertEquals(OutputMessages.ERROR, response.getResponse());
-    assertEquals(OutputMessages.NO_SUCH_KEY, ((ErrorResponse) response).getReason());
+  @Test
+  void shouldNotDeleteDataWhenJsonPrimitiveKeyDoesNotExist() {
+    // given
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    JsonObject mockDatabase = new JsonObject();
+    // when
+    when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
+    controller.setJsonFileManager(mockFileManager);
+    JsonPrimitive key = new JsonPrimitive("key");
+    String result = controller.deleteData(key);
+    // then
+    assertEquals(OutputMessages.ERROR, result);
+  }
+
+  @Test
+  void shouldDeleteDataWithJsonArrayKey() {
+    // given
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    JsonObject nestedObject = new JsonObject();
+    nestedObject.addProperty("toDelete", "value");
+    JsonObject mockDatabase = new JsonObject();
+    mockDatabase.add("level1", nestedObject);
+    // when
+    when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
+    controller.setJsonFileManager(mockFileManager);
+    JsonArray key = new JsonArray();
+    key.add("level1");
+    key.add("toDelete");
+    String result = controller.deleteData(key);
+    // when
+    assertEquals(OutputMessages.OK, result);
+    assertFalse(nestedObject.has("toDelete"));
+    verify(mockFileManager).updateJSON(mockDatabase);
+  }
+
+  @Test
+  void shouldReturnErrorForInvalidKeyType() {
+    // given
+    JSONFileManager mockFileManager = mock(JSONFileManager.class);
+    // when
+    when(mockFileManager.updateDatabase()).thenReturn(Optional.of(new JsonObject()));
+    controller.setJsonFileManager(mockFileManager);
+    JsonElement key = new JsonObject();
+    String result = controller.deleteData(key);
+    // then
+    assertEquals(OutputMessages.ERROR, result);
   }
 }

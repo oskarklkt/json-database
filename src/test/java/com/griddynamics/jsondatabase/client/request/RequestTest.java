@@ -38,13 +38,13 @@ class RequestTest {
 
   @Test
   void equalsShouldReturnFalseForNull() {
-    Request request = new Request("type");
+    Request request = new Request("type", null);
     assertNotEquals(null, request);
   }
 
   @Test
   void hashCodeShouldBeConsistent() {
-    Request request = new Request("type");
+    Request request = new Request("type", null);
     int initialHashCode = request.hashCode();
     assertEquals(initialHashCode, request.hashCode());
   }

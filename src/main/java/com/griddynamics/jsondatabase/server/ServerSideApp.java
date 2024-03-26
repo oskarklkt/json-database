@@ -1,13 +1,13 @@
 package com.griddynamics.jsondatabase.server;
 
 import com.griddynamics.jsondatabase.client.request.Request;
+import com.griddynamics.jsondatabase.controller.Controller;
 import com.griddynamics.jsondatabase.controller.JSONDatabaseController;
-import com.griddynamics.jsondatabase.repository.JSONDatabaseModel;
 import com.griddynamics.jsondatabase.server.input.InputHandler;
 import com.griddynamics.jsondatabase.server.messages.*;
 import com.griddynamics.jsondatabase.server.response.Response;
-import com.griddynamics.jsondatabase.server.socket.Factory.DefaultServerSocketFactory;
-import com.griddynamics.jsondatabase.server.socket.Factory.ServerSocketFactory;
+import com.griddynamics.jsondatabase.server.socket.factory.DefaultServerSocketFactory;
+import com.griddynamics.jsondatabase.server.socket.factory.ServerSocketFactory;
 import com.griddynamics.jsondatabase.server.socket.ServerConnection;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -21,12 +21,12 @@ import java.util.concurrent.Executors;
 public class ServerSideApp {
 
   static InputHandler inputHandler = new InputHandler();
-  static JSONDatabaseController controller = new JSONDatabaseController(new JSONDatabaseModel());
+  static Controller controller = new Controller(new JSONDatabaseController());
   static ServerConnection serverConnection;
   private static final ServerSocketFactory socketFactory = new DefaultServerSocketFactory();
 
   public static void main(String[] args) {
-    log.info(OutputMessages.SERVER_STARTED);
+    log.info("{}", OutputMessages.SERVER_STARTED);
     startApp();
   }
 
