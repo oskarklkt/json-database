@@ -9,6 +9,7 @@ import com.griddynamics.jsondatabase.server.messages.OutputMessages;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 import java.util.Optional;
 
@@ -18,16 +19,18 @@ import static org.mockito.Mockito.*;
 class JSONDatabaseControllerTest {
 
   JSONDatabaseController controller;
+  JSONFileManager mockFileManager;
 
   @BeforeEach
   void setUp() {
-    controller = new JSONDatabaseController();
+    mockFileManager = mock(JSONFileManager.class);
+    controller = new JSONDatabaseController(mockFileManager);
   }
 
   @Test
   void constructorShouldInitializeFieldsProperly() {
     // constructor creates writeLock and readLock, that's why we only check if it compiles right
-    JSONDatabaseController controller = new JSONDatabaseController();
+    JSONDatabaseController controller = new JSONDatabaseController(mockFileManager);
     controller.getReadLock().lock();
     controller.getReadLock().unlock();
     controller.getWriteLock().lock();
@@ -37,12 +40,10 @@ class JSONDatabaseControllerTest {
   @Test
   void shouldReturnElementWhenKeyIsJsonPrimitiveAndExists() {
     // given
-    JSONFileManager mockFileManager = mock(JSONFileManager.class);
     JsonObject mockDatabase = new JsonObject();
     mockDatabase.addProperty("key", "value");
     // when
     when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
-    controller.setJsonFileManager(mockFileManager);
     JsonElement key = new JsonPrimitive("key");
     JsonElement result = controller.getData(key);
     // then
@@ -57,7 +58,6 @@ class JSONDatabaseControllerTest {
     JsonObject mockDatabase = new JsonObject();
     // when
     when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
-    controller.setJsonFileManager(mockFileManager);
     JsonElement key = new JsonPrimitive("nonexistentKey");
     JsonElement result = controller.getData(key);
     // then
@@ -67,13 +67,11 @@ class JSONDatabaseControllerTest {
   @Test
   void shouldReturnNullWhenKeysDoNotExistInJsonArrayAndNotCreating() {
     // given
-    JSONFileManager mockFileManager = mock(JSONFileManager.class);
     JsonObject mockDatabase = new JsonObject();
     JsonObject intermediateObject = new JsonObject();
     mockDatabase.add("existentElement", intermediateObject);
     // when
     when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
-    controller.setJsonFileManager(mockFileManager);
     JsonArray arrayKey = new JsonArray();
     arrayKey.add("existentElement");
     arrayKey.add("nonexistentNestedElement");
@@ -84,11 +82,8 @@ class JSONDatabaseControllerTest {
 
   @Test
   void shouldCreateDatabaseAndSetDataIfDatabaseIsNull() {
-    // given
-    JSONFileManager mockFileManager = mock(JSONFileManager.class);
     // when
     when(mockFileManager.updateDatabase()).thenReturn(null);
-    controller.setJsonFileManager(mockFileManager);
     JsonPrimitive key = new JsonPrimitive("key");
     JsonPrimitive value = new JsonPrimitive("value");
     controller.setData(key, value);
@@ -103,11 +98,9 @@ class JSONDatabaseControllerTest {
   @Test
   void shouldSetDataWithJsonPrimitiveKey() {
     // given
-    JSONFileManager mockFileManager = mock(JSONFileManager.class);
     JsonObject mockDatabase = new JsonObject();
     // when
     when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
-    controller.setJsonFileManager(mockFileManager);
     JsonPrimitive key = new JsonPrimitive("key");
     JsonPrimitive value = new JsonPrimitive("value");
     controller.setData(key, value);
@@ -119,11 +112,9 @@ class JSONDatabaseControllerTest {
   @Test
   void shouldSetDataWithJsonArrayKey() {
     // given
-    JSONFileManager mockFileManager = mock(JSONFileManager.class);
     JsonObject mockDatabase = new JsonObject();
     // when
     when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
-    controller.setJsonFileManager(mockFileManager);
     JsonArray key = new JsonArray();
     key.add("level1");
     key.add("level2");
@@ -138,12 +129,10 @@ class JSONDatabaseControllerTest {
   @Test
   void shouldDeleteDataWithJsonPrimitiveKey() {
     // given
-    JSONFileManager mockFileManager = mock(JSONFileManager.class);
     JsonObject mockDatabase = new JsonObject();
     mockDatabase.addProperty("key", "value");
     // when
     when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
-    controller.setJsonFileManager(mockFileManager);
     JsonPrimitive key = new JsonPrimitive("key");
     String result = controller.deleteData(key);
     // then
@@ -155,11 +144,9 @@ class JSONDatabaseControllerTest {
   @Test
   void shouldNotDeleteDataWhenJsonPrimitiveKeyDoesNotExist() {
     // given
-    JSONFileManager mockFileManager = mock(JSONFileManager.class);
     JsonObject mockDatabase = new JsonObject();
     // when
     when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
-    controller.setJsonFileManager(mockFileManager);
     JsonPrimitive key = new JsonPrimitive("key");
     String result = controller.deleteData(key);
     // then
@@ -169,14 +156,12 @@ class JSONDatabaseControllerTest {
   @Test
   void shouldDeleteDataWithJsonArrayKey() {
     // given
-    JSONFileManager mockFileManager = mock(JSONFileManager.class);
     JsonObject nestedObject = new JsonObject();
     nestedObject.addProperty("toDelete", "value");
     JsonObject mockDatabase = new JsonObject();
     mockDatabase.add("level1", nestedObject);
     // when
     when(mockFileManager.updateDatabase()).thenReturn(Optional.of(mockDatabase));
-    controller.setJsonFileManager(mockFileManager);
     JsonArray key = new JsonArray();
     key.add("level1");
     key.add("toDelete");
@@ -189,11 +174,8 @@ class JSONDatabaseControllerTest {
 
   @Test
   void shouldReturnErrorForInvalidKeyType() {
-    // given
-    JSONFileManager mockFileManager = mock(JSONFileManager.class);
     // when
     when(mockFileManager.updateDatabase()).thenReturn(Optional.of(new JsonObject()));
-    controller.setJsonFileManager(mockFileManager);
     JsonElement key = new JsonObject();
     String result = controller.deleteData(key);
     // then

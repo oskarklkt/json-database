@@ -17,13 +17,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Setter
 public class JSONDatabaseController implements DatabaseController {
   private final JSONDatabaseModel jsonDatabaseModel;
-  private JSONFileManager jsonFileManager;
+  private final JSONFileManager jsonFileManager;
   private final ReentrantReadWriteLock.WriteLock writeLock;
   private final ReentrantReadWriteLock.ReadLock readLock;
 
-  public JSONDatabaseController() {
+  public JSONDatabaseController(JSONFileManager jsonFileManager) {
     this.jsonDatabaseModel = new JSONDatabaseModel();
-    this.jsonFileManager = new JSONFileManager();
+    this.jsonFileManager = jsonFileManager;
     ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     this.writeLock = readWriteLock.writeLock();
     this.readLock = readWriteLock.readLock();

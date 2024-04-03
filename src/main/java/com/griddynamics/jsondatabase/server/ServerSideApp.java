@@ -3,6 +3,7 @@ package com.griddynamics.jsondatabase.server;
 import com.griddynamics.jsondatabase.client.request.Request;
 import com.griddynamics.jsondatabase.controller.Controller;
 import com.griddynamics.jsondatabase.controller.JSONDatabaseController;
+import com.griddynamics.jsondatabase.repository.JSONFileManager;
 import com.griddynamics.jsondatabase.server.input.InputHandler;
 import com.griddynamics.jsondatabase.server.messages.*;
 import com.griddynamics.jsondatabase.server.response.Response;
@@ -21,7 +22,7 @@ import java.util.concurrent.Executors;
 public class ServerSideApp {
 
   static InputHandler inputHandler = new InputHandler();
-  static Controller controller = new Controller(new JSONDatabaseController());
+  static Controller controller = new Controller(new JSONDatabaseController(new JSONFileManager()));
   static ServerConnection serverConnection;
   private static final ServerSocketFactory socketFactory = new DefaultServerSocketFactory();
 
