@@ -365,7 +365,7 @@ Received:
 ## Tests coverage ✅
 
 <details><summary>Click to expand</summary>
-![Screenshot_2024-03-22_at_19.35.25](/uploads/50b4ed40fd6c0c80fe98e460ac9b1039/Screenshot_2024-03-22_at_19.35.25.png)
+<img width="1203" alt="Screenshot 2024-04-06 at 20 58 08" src="https://github.com/oskarklkt/json-database/assets/117487714/71fa8558-b35b-4fcb-8bbd-913b795f95be">
 </details>
 
 
